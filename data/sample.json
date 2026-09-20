@@ -1,0 +1,9 @@
+{
+  "event_id": "092102-015-sample-001",
+  "event_type": "EVIDENCE_SUBMITTED",
+  "aggregate_type": "injury_claim",
+  "aggregate_id": "icu_family_care_claim-001",
+  "occurred_at": "2026-09-20T12:00:00+08:00",
+  "version": 1,
+  "summary": "ICU场外照护举证领域样例"
+}
