@@ -19,10 +19,20 @@
     "event_type": {
       "type": "string",
       "enum": [
+        "CLAIM_OPENED",
+        "RULE_VERSION_PINNED",
         "EVIDENCE_SUBMITTED",
+        "EVIDENCE_MERGED",
+        "HOSPITALIZATION_RECORDED",
+        "MEDICAL_CARE_ITEM_RECORDED",
+        "LIVING_CARE_NEED_RECORDED",
+        "FAMILY_ACTIVITY_RECORDED",
+        "EXPERT_OPINION_RECORDED",
         "CARE_CLASSIFIED",
         "CALCULATION_FROZEN",
         "DECISION_ISSUED",
+        "REVIEW_OPENED",
+        "FOLLOWUP_RESULT_RECORDED",
         "DECISION_REVISED"
       ]
     },
@@ -30,12 +40,22 @@
       "type": "string",
       "enum": [
         "injury_claim",
+        "hospitalization_phase",
+        "care_item",
         "care_evidence",
+        "living_care_need",
+        "family_activity",
+        "expert_opinion",
+        "care_classification",
         "calculation_snapshot",
         "review_decision"
       ]
     },
     "aggregate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_id": {
       "type": "string",
       "minLength": 1
     },

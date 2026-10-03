@@ -1,9 +1,17 @@
 {
-  "event_id": "092102-015-sample-001",
+  "event_id": "care_evidence:ev-sample-001:v1",
   "event_type": "EVIDENCE_SUBMITTED",
-  "aggregate_type": "injury_claim",
-  "aggregate_id": "icu_family_care_claim-001",
+  "aggregate_type": "care_evidence",
+  "aggregate_id": "ev-sample-001",
+  "claim_id": "claim-sample-001",
   "occurred_at": "2026-09-20T12:00:00+08:00",
   "version": 1,
-  "summary": "ICU场外照护举证领域样例"
+  "summary": "病历材料（HOSPITAL 提交）",
+  "kind": "MEDICAL_RECORD",
+  "submitted_by": "上海市某医院",
+  "submitted_by_role": "HOSPITAL",
+  "content_ref": "oss://claim-sample-001/ev-sample-001.pdf",
+  "fingerprints": ["sha256:7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730"],
+  "covers_requirement": "REQ_HOSPITALIZATION",
+  "labels": ["MEDICAL_DETAIL"]
 }
