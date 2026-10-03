@@ -1,9 +1,18 @@
 {
   "event_id": "092102-015-sample-001",
   "event_type": "EVIDENCE_SUBMITTED",
-  "aggregate_type": "injury_claim",
-  "aggregate_id": "icu_family_care_claim-001",
+  "aggregate_type": "care_evidence",
+  "aggregate_id": "ev-sample-001",
   "occurred_at": "2026-09-20T12:00:00+08:00",
   "version": 1,
-  "summary": "ICU场外照护举证领域样例"
+  "summary": "ICU场外照护举证领域样例",
+  "payload": {
+    "claim_id": "icu_family_care_claim-001",
+    "evidence_kind": "life_care_need",
+    "submitted_by": "victim-001",
+    "facts": {
+      "periods": [{ "from": "2026-09-01", "to": "2026-09-10" }],
+      "note": "样例"
+    }
+  }
 }

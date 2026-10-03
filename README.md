@@ -1,15 +1,42 @@
 # ICU场外照护举证
 
-本仓库保存ICU场外照护举证的领域词汇、事件约定与基础校验代码，便于各参与方在后续开发中统一对象身份和版本语义。
+本仓库保存ICU场外照护举证的领域词汇、事件约定与后端核心逻辑，便于各参与方在后续开发中统一对象身份和版本语义。
 
 ## 目录
 
 - `contracts/domain.schema.json`：领域事件信封及稳定枚举。
 - `data/sample.json`：一条可用于联调的中文业务样例。
-- `src/`：事件基础字段校验。
-- `tests/`：领域资料的一致性检查。
+- `data/sample_case.json`：覆盖登记、举证、分类、计算、复核、后继更正的全流程样例案件。
+- `src/`：事件校验、事件存储、证据归并、计算快照、复核裁决、可见范围与受害方视图。
+- `tests/`：领域资料与核心逻辑的一致性检查。
 
-当前核心对象为injury_claim、care_evidence、calculation_snapshot、review_decision，已登记事件为EVIDENCE_SUBMITTED、CARE_CLASSIFIED、CALCULATION_FROZEN、DECISION_ISSUED、DECISION_REVISED。这些资料只约束基础交换格式，具体业务服务需要在保持兼容的前提下继续建设。
+## 核心对象与事件
+
+聚合：`injury_claim`（事故案件）、`care_evidence`（举证材料）、`calculation_snapshot`（计算快照）、`review_decision`（复核与裁决）、`rule_set`（计算规则版本）。
+
+事件：
+
+| 事件 | 含义 |
+| --- | --- |
+| `CLAIM_REGISTERED` | 事故案件登记 |
+| `EVIDENCE_SUBMITTED` | 材料提交（住院阶段、医疗护理项目、生活照护需求、家属待命与事务行为、收入证明、机构意见等） |
+| `EVIDENCE_LINKED` | 重复材料归并引用，不重复计入 |
+| `CARE_CLASSIFIED` | 照护事实分类（仅登记事实，不含通过/拒绝结论） |
+| `RULE_SET_PUBLISHED` | 计算规则版本发布 |
+| `CALCULATION_FROZEN` | 冻结计算快照 |
+| `REVIEW_OPENED` | 争议进入复核，锁定当时的冻结快照 |
+| `DECISION_ISSUED` | 有权人员作出裁决 |
+| `DECISION_REVISED` | 后继更正（二审、新鉴定），原裁决保留 |
+
+## 业务约束
+
+- **事实、规则与判断分离**：系统不得依据“ICU”或“门外守候”自动通过或拒绝。`CARE_CLASSIFIED` 只登记证据事实（禁止携带自动裁决字段），规则匹配由计算快照完成，结论只能由有权人员（`claims_handler`/`reviewer`）通过 `DECISION_*` 事件作出。
+- **不重复计算**：医院专业护理（`medical_care`，已计入医疗费用）与家属生活照护（`life_care`）按天去重；家属待命与文书、缴费、转院等事务行为（`standby_admin`）记录事实但不计入生活照护。
+- **按事故发生时版本计算**：一名护理人、期限上限、地区劳务标准均取事故日期有效的规则版本；人数或期限例外必须引用本案医疗或鉴定意见（`institutional_opinion`）。
+- **只增不改**：重复材料按内容哈希归并引用；补证生成新证据聚合、不覆盖原提交；计算快照冻结后不可变；更正以后继裁决引用原裁决，原裁决保留。
+- **可重放**：`verifySnapshot` 从事件流重新计算并与冻结快照比对，复核者可重放医疗护理与生活照护没有重复计算的全过程；冻结后新增材料会导致校验差异。
+- **最小可见范围**：医疗详情与家属收入仅理赔、复核人员可见；对方保险人员仅见一般范围（如裁决结果与金额形成）；受害方另见事务行为类材料。
+- **受害方视图**：`victimView` 给出缺什么证据、哪些时段获认定、金额如何形成（规则版本、日标准、人数、天数、例外及意见引用）。
 
 ## 本地检查
 

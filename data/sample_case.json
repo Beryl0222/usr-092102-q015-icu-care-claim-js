@@ -1,0 +1,434 @@
+{
+  "description": "全流程样例：事故案件登记后，病历、费用单、通知记录与误工材料由不同主体补交；重复病历归并引用；补证不覆盖原提交；医疗护理与生活照护不重复计算；争议复核冻结快照；二审阶段新鉴定意见以后继更正处理。",
+  "events": [
+    {
+      "event_id": "case-2026-001-evt-001",
+      "event_type": "RULE_SET_PUBLISHED",
+      "aggregate_type": "rule_set",
+      "aggregate_id": "rules-hd-2025",
+      "occurred_at": "2025-01-01T00:00:00+08:00",
+      "version": 1,
+      "summary": "2025版地区劳务标准（事故发生时有效版本）",
+      "payload": {
+        "effective_from": "2025-01-01",
+        "region": "华东某市",
+        "max_caregivers": 1,
+        "period_cap_days": 90,
+        "daily_labor_standard": 180
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-002",
+      "event_type": "RULE_SET_PUBLISHED",
+      "aggregate_type": "rule_set",
+      "aggregate_id": "rules-hd-2026",
+      "occurred_at": "2026-06-01T00:00:00+08:00",
+      "version": 1,
+      "summary": "2026版地区劳务标准（事故后生效，不适用于本案）",
+      "payload": {
+        "effective_from": "2026-06-01",
+        "region": "华东某市",
+        "max_caregivers": 1,
+        "period_cap_days": 120,
+        "daily_labor_standard": 200
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-003",
+      "event_type": "CLAIM_REGISTERED",
+      "aggregate_type": "injury_claim",
+      "aggregate_id": "claim-2026-001",
+      "occurred_at": "2026-03-05T09:00:00+08:00",
+      "version": 1,
+      "summary": "交通事故案件登记",
+      "payload": {
+        "accident_date": "2026-03-01",
+        "region": "华东某市",
+        "claimant_id": "victim-001"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-004",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-ward-001",
+      "occurred_at": "2026-03-12T10:00:00+08:00",
+      "version": 1,
+      "summary": "ICU住院阶段记录（病历，受害方提交）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "hospitalization_stage",
+        "submitted_by": "victim-001",
+        "facts": {
+          "facility": "市一院",
+          "stage": "ICU",
+          "period": { "from": "2026-03-01", "to": "2026-03-10" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-005",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-ward-002",
+      "occurred_at": "2026-03-26T10:00:00+08:00",
+      "version": 1,
+      "summary": "普通病房住院阶段记录",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "hospitalization_stage",
+        "submitted_by": "victim-001",
+        "facts": {
+          "facility": "市一院",
+          "stage": "普通病房",
+          "period": { "from": "2026-03-11", "to": "2026-03-25" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-006",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-med-001",
+      "occurred_at": "2026-03-26T11:00:00+08:00",
+      "version": 1,
+      "summary": "医院专业护理项目（费用单，医院联络人提交，已计入医疗费用）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "medical_care_item",
+        "submitted_by": "hospital-liaison-01",
+        "facts": {
+          "item": "特级护理",
+          "provider": "市一院",
+          "period": { "from": "2026-03-01", "to": "2026-03-10" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-007",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-life-001",
+      "occurred_at": "2026-03-28T09:00:00+08:00",
+      "version": 1,
+      "summary": "家属主张住院全程生活照护",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "life_care_need",
+        "submitted_by": "victim-001",
+        "facts": {
+          "periods": [{ "from": "2026-03-01", "to": "2026-03-25" }],
+          "caregiver": "张某",
+          "note": "住院全程家属生活照护"
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-008",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-standby-001",
+      "occurred_at": "2026-03-28T09:30:00+08:00",
+      "version": 1,
+      "summary": "ICU期间家属门外待命（事实记录，不据此自动通过或拒绝）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "family_standby",
+        "submitted_by": "victim-001",
+        "facts": {
+          "period": { "from": "2026-03-01", "to": "2026-03-10" },
+          "note": "ICU门外待命，未进入病房"
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-009",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-admin-001",
+      "occurred_at": "2026-03-28T10:00:00+08:00",
+      "version": 1,
+      "summary": "签署文书与缴费等事务行为",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "administrative_act",
+        "submitted_by": "victim-001",
+        "facts": {
+          "acts": ["签署知情同意书", "缴纳住院费"],
+          "period": { "from": "2026-03-01", "to": "2026-03-03" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-010",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-admin-002",
+      "occurred_at": "2026-04-02T10:00:00+08:00",
+      "version": 1,
+      "summary": "补交转院配合通知记录（补证不覆盖原提交）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "administrative_act",
+        "submitted_by": "victim-001",
+        "supplements": ["ev-admin-001"],
+        "facts": {
+          "acts": ["转院配合"],
+          "period": { "from": "2026-03-10", "to": "2026-03-10" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-011",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-income-001",
+      "occurred_at": "2026-03-28T10:30:00+08:00",
+      "version": 1,
+      "summary": "护理人家属收入证明（误工材料，最小可见范围：income）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "income_proof",
+        "submitted_by": "victim-001",
+        "facts": {
+          "caregiver": "张某",
+          "monthly_income": 6500,
+          "employer": "某机械厂"
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-012",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-dup-001",
+      "occurred_at": "2026-04-05T09:00:00+08:00",
+      "version": 1,
+      "summary": "重复提交的病历（内容与 ev-ward-001 相同）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "hospitalization_stage",
+        "submitted_by": "victim-001",
+        "facts": {
+          "facility": "市一院",
+          "stage": "ICU",
+          "period": { "from": "2026-03-01", "to": "2026-03-10" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-013",
+      "event_type": "EVIDENCE_LINKED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-dup-001",
+      "occurred_at": "2026-04-05T09:05:00+08:00",
+      "version": 2,
+      "summary": "重复材料归并引用，不重复计入",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "duplicate_of": "ev-ward-001"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-014",
+      "event_type": "CARE_CLASSIFIED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-med-001",
+      "occurred_at": "2026-04-08T14:00:00+08:00",
+      "version": 2,
+      "summary": "分类：医院专业护理",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "classification": "medical_care",
+        "classified_by": "handler-07",
+        "rationale": "医院特级护理属专业护理且已计入医疗费用，不作为家属生活照护重复计算"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-015",
+      "event_type": "CARE_CLASSIFIED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-life-001",
+      "occurred_at": "2026-04-08T14:05:00+08:00",
+      "version": 2,
+      "summary": "分类：家属生活照护",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "classification": "life_care",
+        "classified_by": "handler-07",
+        "rationale": "家属在住院期间提供生活照护，按事实登记，是否认定由有权人员裁决"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-016",
+      "event_type": "CARE_CLASSIFIED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-standby-001",
+      "occurred_at": "2026-04-08T14:10:00+08:00",
+      "version": 2,
+      "summary": "分类：家属待命（事实记录）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "classification": "standby_admin",
+        "classified_by": "handler-07",
+        "rationale": "ICU门外待命属事实记录，不直接等同生活照护，也不据此自动拒绝"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-017",
+      "event_type": "CARE_CLASSIFIED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-admin-001",
+      "occurred_at": "2026-04-08T14:15:00+08:00",
+      "version": 2,
+      "summary": "分类：事务行为（不计入生活照护）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "classification": "standby_admin",
+        "classified_by": "handler-07",
+        "rationale": "签署文书、缴费属事务配合，不与生活照护重复计入"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-018",
+      "event_type": "CARE_CLASSIFIED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-admin-002",
+      "occurred_at": "2026-04-08T14:20:00+08:00",
+      "version": 2,
+      "summary": "分类：事务行为（不计入生活照护）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "classification": "standby_admin",
+        "classified_by": "handler-07",
+        "rationale": "转院配合属事务行为，不与生活照护重复计入"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-019",
+      "event_type": "CALCULATION_FROZEN",
+      "aggregate_type": "calculation_snapshot",
+      "aggregate_id": "snapshot-001",
+      "occurred_at": "2026-04-10T15:00:00+08:00",
+      "version": 1,
+      "summary": "冻结计算快照：认定 15 天，金额 2700",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "rule_set_id": "rules-hd-2025",
+        "recognized_periods": [{ "from": "2026-03-11", "to": "2026-03-25" }],
+        "excluded_periods": [
+          {
+            "from": "2026-03-01",
+            "to": "2026-03-10",
+            "reason": "medical_care_covered",
+            "evidence_refs": ["ev-med-001"]
+          }
+        ],
+        "caregiver_count": 1,
+        "daily_standard": 180,
+        "day_count": 15,
+        "amount": 2700,
+        "exceptions": [],
+        "evidence_refs": ["ev-life-001", "ev-med-001"]
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-020",
+      "event_type": "REVIEW_OPENED",
+      "aggregate_type": "review_decision",
+      "aggregate_id": "review-001",
+      "occurred_at": "2026-04-15T10:00:00+08:00",
+      "version": 1,
+      "summary": "复核立案：冻结快照 snapshot-001",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "frozen_snapshot_id": "snapshot-001",
+        "grounds": "家属对ICU时段未获认定及计算金额提出异议",
+        "opened_by": "victim-001"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-021",
+      "event_type": "DECISION_ISSUED",
+      "aggregate_type": "review_decision",
+      "aggregate_id": "decision-001",
+      "occurred_at": "2026-04-20T16:00:00+08:00",
+      "version": 1,
+      "summary": "复核决定：维持快照 snapshot-001 的计算",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "snapshot_id": "snapshot-001",
+        "outcome": "partially_recognized",
+        "decided_by": "reviewer-03",
+        "decider_role": "reviewer"
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-022",
+      "event_type": "EVIDENCE_SUBMITTED",
+      "aggregate_type": "care_evidence",
+      "aggregate_id": "ev-op-002",
+      "occurred_at": "2026-05-10T10:00:00+08:00",
+      "version": 1,
+      "summary": "二审阶段新鉴定意见：伤后早期需二人护理",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "evidence_kind": "institutional_opinion",
+        "submitted_by": "victim-001",
+        "facts": {
+          "opinion_type": "appraisal",
+          "issuer": "某司法鉴定所",
+          "conclusion": "伤后早期需二人护理",
+          "period": { "from": "2026-03-11", "to": "2026-03-17" }
+        }
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-023",
+      "event_type": "CALCULATION_FROZEN",
+      "aggregate_type": "calculation_snapshot",
+      "aggregate_id": "snapshot-002",
+      "occurred_at": "2026-05-12T11:00:00+08:00",
+      "version": 1,
+      "summary": "冻结计算快照：认定 15 天，金额 5400（二人护理例外，引用鉴定意见）",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "rule_set_id": "rules-hd-2025",
+        "recognized_periods": [{ "from": "2026-03-11", "to": "2026-03-25" }],
+        "excluded_periods": [
+          {
+            "from": "2026-03-01",
+            "to": "2026-03-10",
+            "reason": "medical_care_covered",
+            "evidence_refs": ["ev-med-001"]
+          }
+        ],
+        "caregiver_count": 2,
+        "daily_standard": 180,
+        "day_count": 15,
+        "amount": 5400,
+        "exceptions": [
+          { "type": "caregiver_count", "value": 2, "opinion_refs": ["ev-op-002"] }
+        ],
+        "evidence_refs": ["ev-life-001", "ev-med-001"]
+      }
+    },
+    {
+      "event_id": "case-2026-001-evt-024",
+      "event_type": "DECISION_REVISED",
+      "aggregate_type": "review_decision",
+      "aggregate_id": "decision-002",
+      "occurred_at": "2026-05-15T14:00:00+08:00",
+      "version": 1,
+      "summary": "后继更正（new_appraisal）：依据新鉴定意见改按二人护理计算，原裁决保留",
+      "payload": {
+        "claim_id": "claim-2026-001",
+        "revises": "decision-001",
+        "reason": "new_appraisal",
+        "snapshot_id": "snapshot-002",
+        "decided_by": "reviewer-03",
+        "decider_role": "reviewer"
+      }
+    }
+  ]
+}

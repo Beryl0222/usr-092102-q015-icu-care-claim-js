@@ -19,9 +19,13 @@
     "event_type": {
       "type": "string",
       "enum": [
+        "CLAIM_REGISTERED",
         "EVIDENCE_SUBMITTED",
+        "EVIDENCE_LINKED",
         "CARE_CLASSIFIED",
+        "RULE_SET_PUBLISHED",
         "CALCULATION_FROZEN",
+        "REVIEW_OPENED",
         "DECISION_ISSUED",
         "DECISION_REVISED"
       ]
@@ -32,7 +36,8 @@
         "injury_claim",
         "care_evidence",
         "calculation_snapshot",
-        "review_decision"
+        "review_decision",
+        "rule_set"
       ]
     },
     "aggregate_id": {
@@ -50,6 +55,9 @@
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "payload": {
+      "type": "object"
     }
   },
   "additionalProperties": true
